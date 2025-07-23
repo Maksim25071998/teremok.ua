@@ -1,0 +1,1 @@
+export default function Home() { return <h1>Ласкаво просимо до Теремка!</h1>; }
