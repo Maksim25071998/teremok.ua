@@ -1,0 +1,94 @@
+
+    використання: actions/setup-node@v3.9.1            - назва: Завантажити артефакт збірки
+  використання: actions/upload-artifact@v4.6.2
+  з:
+    # Назва артефакту
+    name: # необов'язково, за замовчуванням артефакт
+    # Файл, каталог або шаблон підстановки, що описує, що завантажувати
+    шлях:
+    # Бажана поведінка, якщо за вказаним шляхом не знайдено жодних файлів.
+Доступні опції:
+  попередження: Вивести попередження, але не переривати дію
+  помилка: Невдача дії з повідомленням про помилку
+  ігнорувати: Не виводити жодних попереджень чи помилок, дія не завершується невдачею
+
+    if-no-files-found: # необов'язково, за замовчуванням попереджати
+    # Тривалість дії артефакту в днях. 0 означає використання умовного зберігання.
+Мінімум 1 день. Максимум 90 днів, якщо не змінити на сторінці налаштувань репозиторію.
+
+    дні зберігання: # необов'язково
+    # Рівень стиснення Zlib, який буде застосовано до архіву артефактів. Значення може змінюватися від 0 до 9: - 0: Без стиснення - 1: Найкраща швидкість - 6: Стиснення за замовчуванням (те саме, що й у GNU Gzip) - 9: Найкраще стиснення. Вищі рівні призведуть до кращого стиснення, але процес займе більше часу. Для великих файлів, які нелегко стискаються, рекомендується значення 0 для значно швидшого завантаження.
+
+    рівень стиснення: # необов'язковий, за замовчуванням 6
+    # Якщо значення true, артефакт із відповідним ім'ям буде видалено перед завантаженням нового. Якщо значення false, дія завершиться невдачею, якщо артефакт із заданим ім'ям вже існує. Не завершиться невдачею, якщо артефакт не існує.
+
+    overwrite: # необов'язково, за замовчуванням false
+    # Якщо значення true, приховані файли будуть включені до артефакту. Якщо значення false, приховані файли будуть виключені з артефакту.
+
+    include-hidden-files: # необов'язково, за замовчуванням — false
+          
+  з:
+    # Встановити always-auth в npmrc.
+    always-auth: # необов'язково, за замовчуванням — false
+    # Версія Специфікація версії, яку потрібно використовувати. Приклади: 12.x, 10.15.1, >=10.15.0.
+    версія вузла: # необов'язково
+    # Файл, що містить специфікацію версії, яку потрібно використовувати. Приклади: .nvmrc, .node-version, .tool-versions.
+    файл-версій-вузла: # необов'язково
+    # Цільова архітектура для використання Node. Приклади: x86, x64. За замовчуванням використовуватиметься системна архітектура.
+    архітектура: # необов'язково
+    # Встановіть цей параметр, якщо ви хочете, щоб дія перевіряла останню доступну версію, яка відповідає специфікації версії.
+    перевірити-останні: # необов'язково
+    # Додатковий реєстр для налаштування автентифікації. Встановить реєстр у файлах .npmrc та .yarnrc на рівні проекту та налаштує автентифікацію на зчитування з env.NODE_AUTH_TOKEN.
+    url-реєстру: # необов'язково
+    # Додаткова область дії для автентифікації в реєстрах з обмеженою областю дії. Буде використовуватися власник репозиторію під час використання реєстру пакетів GitHub (https://npm.pkg.github.com/).
+    область застосування: # необов'язковий
+    # Використовується для отримання дистрибутивів вузлів з версій вузлів. Оскільки існує значення за замовчуванням, користувач зазвичай не надає його. Під час виконання цієї дії на github.com достатньо значення за замовчуванням. Під час роботи на GHES ви можете передати особистий токен доступу для github.com, якщо у вас виникло обмеження швидкості.
+    токен: # необов'язковий, за замовчуванням ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Використовується для визначення менеджера пакетів для кешування в каталозі за замовчуванням. Підтримувані значення: npm, yarn, pnpm.
+    кеш: # необов'язково
+    # Використовується для визначення шляху до файлу залежностей: package-lock.json, yarn.lock тощо. Підтримує шаблони підстановки або список імен файлів для кешування кількох залежностей.
+    шлях-залежності-кешу: # необов'язково
+          his workflow will build a Node.js project and deploy it to an Azure Functions App on Windows or Linux when a commit is pushed to your default branch.
+#
+# This 
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'your-app-name'   # set this to your function app name on Azure
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
+  NODE_VERSION: '20.x'                      # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest # For Linux, use ubuntu-latest
+    environment: dev
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v4
+
+    # If you want to use Azure RBAC instead of Publish Profile, then uncomment the task below
+    # - name: 'Login via Azure CLI'
+    #   uses: azure/login@v1
+    #   with:
+    #     creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # set up AZURE_RBAC_CREDENTIALS secrets in your repository
+
+    - name: Setup Node ${{ env.NODE_VERSION }} Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+
+    - name: 'Resolve Project Dependencies Using Npm'
+      shell: pwsh # For Linux, use bash
+      run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        npm install
+        npm run build --if-present
+        npm run test --if-present
+        popd
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Remove publish-profile to use Azure RBAC
